@@ -1,0 +1,22 @@
+# Copie este arquivo para config/config.yaml e ajuste os caminhos locais.
+# Nunca aponte para sistemas de terceiros. Use apenas diretórios que você controla.
+
+paths:
+  - ./samples
+
+include:
+  - "**/*"
+
+exclude:
+  - "**/.git/**"
+  - "**/__pycache__/**"
+  - "**/*.pyc"
+  - "**/.venv/**"
+  - "**/node_modules/**"
+  - "**/data/**"
+  - "**/reports/**"
+
+db_path: data/integrity.db
+report_dir: reports
+log_level: INFO
+follow_symlinks: false
