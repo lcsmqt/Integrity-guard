@@ -37,7 +37,8 @@ flowchart TD
 1. Clone o repositório:
 
 ```bash
-
+git clone https://github.com/lcsmqt/file-integrity-guard.git
+cd file-integrity-guard
 ```
 
 2. Instale as dependências:
