@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Iterable, Sequence
 from fnmatch import fnmatch
 from pathlib import Path
-from typing import Iterable, List, Sequence
 
 from src.hashing import get_file_info
 from src.models import Config, FileInfo
@@ -11,9 +11,9 @@ from src.models import Config, FileInfo
 logger = logging.getLogger(__name__)
 
 
-def scan_paths(config: Config) -> List[FileInfo]:
+def scan_paths(config: Config) -> list[FileInfo]:
     """Walk authorized local paths and return hashed file records."""
-    collected: List[FileInfo] = []
+    collected: list[FileInfo] = []
     seen: set[str] = set()
 
     for raw_path in config.paths:
@@ -47,7 +47,11 @@ def scan_paths(config: Config) -> List[FileInfo]:
     return collected
 
 
-def scan_files(paths: Sequence[str], exclude: Sequence[str], include: Sequence[str] | None = None) -> List[FileInfo]:
+def scan_files(
+    paths: Sequence[str],
+    exclude: Sequence[str],
+    include: Sequence[str] | None = None,
+) -> list[FileInfo]:
     config = Config(
         paths=list(paths),
         include=list(include or ["**/*"]),
@@ -66,10 +70,14 @@ def _is_included(
     exclude: Iterable[str],
 ) -> bool:
     relative = _relative_posix(path, root)
-    if any(_match_glob(relative, pattern) or _match_glob(path.as_posix(), pattern) for pattern in exclude):
+
+    def matches(pattern: str) -> bool:
+        return _match_glob(relative, pattern) or _match_glob(path.as_posix(), pattern)
+
+    if any(matches(pattern) for pattern in exclude):
         return False
     include_patterns = list(include) or ["**/*"]
-    return any(_match_glob(relative, pattern) or _match_glob(path.as_posix(), pattern) for pattern in include_patterns)
+    return any(matches(pattern) for pattern in include_patterns)
 
 
 def _relative_posix(path: Path, root: Path) -> str:

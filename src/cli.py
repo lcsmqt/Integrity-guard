@@ -3,9 +3,9 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
+from collections.abc import Sequence
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional, Sequence
 
 from src.compare import compare_baselines
 from src.config import load_config
@@ -30,10 +30,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    init_parser = subparsers.add_parser("init", help="Cria ou substitui a linha de base autorizada.")
+    init_parser = subparsers.add_parser("init", help="Cria ou substitui a linha de base.")
     init_parser.set_defaults(handler=_handle_init)
 
-    check_parser = subparsers.add_parser("check", help="Compara o estado atual com a linha de base.")
+    check_parser = subparsers.add_parser("check", help="Compara o estado atual com a base.")
     check_parser.add_argument(
         "--write-report",
         action="store_true",
@@ -46,7 +46,7 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main(argv: Optional[Sequence[str]] = None) -> int:
+def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     config = load_config(args.config)
@@ -99,7 +99,9 @@ def _run_check(config: Config) -> ScanResult:
     with FileStore(db_path) as store:
         baseline = store.get_all_files()
     if not baseline:
-        raise FileNotFoundError("A linha de base está vazia. Execute 'python -m src.cli init' novamente.")
+        raise FileNotFoundError(
+            "A linha de base está vazia. Execute 'python -m src.cli init' novamente."
+        )
     return compare_baselines(current, baseline)
 
 

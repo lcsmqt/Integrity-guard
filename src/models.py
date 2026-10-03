@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
 
 
 @dataclass
@@ -14,13 +13,13 @@ class FileInfo:
 
 @dataclass
 class ScanResult:
-    added: List[FileInfo] = field(default_factory=list)
-    modified: List[FileInfo] = field(default_factory=list)
-    deleted: List[FileInfo] = field(default_factory=list)
-    unchanged: List[FileInfo] = field(default_factory=list)
+    added: list[FileInfo] = field(default_factory=list)
+    modified: list[FileInfo] = field(default_factory=list)
+    deleted: list[FileInfo] = field(default_factory=list)
+    unchanged: list[FileInfo] = field(default_factory=list)
 
     @property
-    def summary(self) -> Dict[str, int]:
+    def summary(self) -> dict[str, int]:
         return {
             "added": len(self.added),
             "modified": len(self.modified),
@@ -35,9 +34,9 @@ class ScanResult:
 
 @dataclass
 class Config:
-    paths: List[str]
-    include: List[str]
-    exclude: List[str]
+    paths: list[str]
+    include: list[str]
+    exclude: list[str]
     db_path: str
     report_dir: str
     log_level: str
@@ -48,12 +47,12 @@ class Config:
 class Report:
     timestamp: str
     scan_result: ScanResult
-    summary: Dict[str, int]
+    summary: dict[str, int]
 
 
 @dataclass
 class ThreatModel:
     description: str
-    mitigations: List[str]
-    vulnerabilities: List[str]
-    residual_risks: Optional[List[str]] = None
+    mitigations: list[str]
+    vulnerabilities: list[str]
+    residual_risks: list[str] | None = None

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import sqlite3
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable, List, Optional
 
 from src.models import FileInfo
 
@@ -61,7 +61,7 @@ class FileStore:
             )
         return len(items)
 
-    def get_file(self, path: str) -> Optional[FileInfo]:
+    def get_file(self, path: str) -> FileInfo | None:
         cursor = self.conn.execute(
             "SELECT path, hash, size, last_modified FROM files WHERE path = ?",
             (path,),
@@ -71,8 +71,10 @@ class FileStore:
             return None
         return FileInfo(row["path"], row["hash"], row["size"], row["last_modified"])
 
-    def get_all_files(self) -> List[FileInfo]:
-        cursor = self.conn.execute("SELECT path, hash, size, last_modified FROM files ORDER BY path")
+    def get_all_files(self) -> list[FileInfo]:
+        cursor = self.conn.execute(
+            "SELECT path, hash, size, last_modified FROM files ORDER BY path"
+        )
         return [
             FileInfo(row["path"], row["hash"], row["size"], row["last_modified"])
             for row in cursor.fetchall()
@@ -85,7 +87,7 @@ class FileStore:
                 (key, value),
             )
 
-    def get_meta(self, key: str) -> Optional[str]:
+    def get_meta(self, key: str) -> str | None:
         cursor = self.conn.execute("SELECT value FROM meta WHERE key = ?", (key,))
         row = cursor.fetchone()
         return None if row is None else str(row["value"])
@@ -93,7 +95,7 @@ class FileStore:
     def close(self) -> None:
         self.conn.close()
 
-    def __enter__(self) -> "FileStore":
+    def __enter__(self) -> FileStore:
         return self
 
     def __exit__(self, exc_type, exc, tb) -> None:

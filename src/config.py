@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 import yaml
 
@@ -47,7 +47,7 @@ def load_config(config_path: str | Path) -> Config:
     )
 
 
-def dump_example_config() -> Dict[str, Any]:
+def dump_example_config() -> dict[str, Any]:
     return {
         "paths": ["./samples"],
         "include": list(DEFAULT_INCLUDE),
@@ -59,7 +59,7 @@ def dump_example_config() -> Dict[str, Any]:
     }
 
 
-def _as_str_list(value: Any, field_name: str) -> List[str]:
+def _as_str_list(value: Any, field_name: str) -> list[str]:
     if value is None:
         return []
     if isinstance(value, str):

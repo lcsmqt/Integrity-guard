@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 from src.models import FileInfo, ScanResult
 
@@ -12,7 +12,7 @@ def utc_now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
-def build_report_payload(result: ScanResult, generated_at: str | None = None) -> Dict[str, Any]:
+def build_report_payload(result: ScanResult, generated_at: str | None = None) -> dict[str, Any]:
     timestamp = generated_at or utc_now_iso()
     return {
         "generated_at": timestamp,
@@ -41,7 +41,11 @@ def write_markdown_report(result: ScanResult, output_path: str | Path) -> Path:
     return path
 
 
-def write_reports(result: ScanResult, report_dir: str | Path, prefix: str = "integrity-report") -> Dict[str, Path]:
+def write_reports(
+    result: ScanResult,
+    report_dir: str | Path,
+    prefix: str = "integrity-report",
+) -> dict[str, Path]:
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     directory = Path(report_dir)
     json_path = write_json_report(result, directory / f"{prefix}-{stamp}.json")
@@ -56,7 +60,7 @@ def write_reports(result: ScanResult, report_dir: str | Path, prefix: str = "int
     }
 
 
-def _file_to_dict(item: FileInfo) -> Dict[str, Any]:
+def _file_to_dict(item: FileInfo) -> dict[str, Any]:
     return {
         "path": item.path,
         "hash": item.hash,
@@ -65,7 +69,7 @@ def _file_to_dict(item: FileInfo) -> Dict[str, Any]:
     }
 
 
-def _render_markdown(payload: Dict[str, Any]) -> str:
+def _render_markdown(payload: dict[str, Any]) -> str:
     summary = payload["summary"]
     lines = [
         "# Relatório de Integridade de Arquivos",
